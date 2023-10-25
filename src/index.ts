@@ -1,7 +1,6 @@
 import { AppDataSource } from "./data-source";
 import * as express from "express";
-import RouterUser from "../src/route/UserRoute";
-import RouterThread from "../src/route/ThreadRoute";
+import { LikeRouter, RepliceRote, ThreadRoute, UserRoute, FollowingRouter } from "./route";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -10,8 +9,11 @@ AppDataSource.initialize()
     const PORT = 3000;
     app.use(express.json());
 
-    app.use("/api/v1", RouterUser);
-    app.use("/api/v1", RouterThread);
+    app.use("/api/v1", UserRoute);
+    app.use("/api/v1", ThreadRoute);
+    app.use("/api/v1", RepliceRote);
+    app.use("/api/v1", LikeRouter);
+    app.use("/api/v1", FollowingRouter);
 
     app.listen(PORT, () => {
       console.log(`port running ${PORT}`);

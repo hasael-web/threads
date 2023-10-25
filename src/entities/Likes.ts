@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -14,10 +15,10 @@ import { Threads } from "./Thread";
 export class Likes {
   @PrimaryGeneratedColumn()
   id: number;
-  @OneToMany(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()
-  user_id: User[];
-  @OneToOne(() => Threads, (thread) => thread.id)
+  user_id: User;
+  @ManyToOne(() => Threads, (thread) => thread.id)
   @JoinColumn()
   thread_id: Threads;
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

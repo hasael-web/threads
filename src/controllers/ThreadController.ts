@@ -8,4 +8,10 @@ export default new (class ThreadController {
   find(req: Request, res: Response) {
     ThreadService.find(req, res);
   }
+  update(req: Request, res: Response) {
+    ThreadService.update(req, res);
+  }
+  delete(req: Request, res: Response) {
+    ThreadService.delete(req, res);
+  }
 })();

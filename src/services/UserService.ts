@@ -20,7 +20,7 @@ export default new (class UserService {
     try {
       const getAll = await this.UserRespository.find({
         relations: {
-          threads: true,
+          follower: true,
         },
       });
 
@@ -91,6 +91,15 @@ export default new (class UserService {
       if (body.photo_profile !== "") {
         findOneUser.photo_profile = body.photo_profile;
       }
+      if (body.email !== "") {
+        findOneUser.email = body.email;
+      }
+      if (body.password !== "") {
+        findOneUser.password = body.password;
+      }
+      if (body.bio !== "") {
+        findOneUser.bio = body.bio;
+      }
 
       this.UserRespository.update(findOneUser, body);
 
@@ -105,7 +114,7 @@ export default new (class UserService {
     try {
       const id: number = parseInt(req.params.id);
 
-      const findUser = await await this.UserRespository.findOneBy({ id });
+      const findUser = await this.UserRespository.findOneBy({ id });
 
       const deleteuser = await this.UserRespository.remove(findUser);
       return res
