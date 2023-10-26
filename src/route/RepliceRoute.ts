@@ -1,11 +1,12 @@
 import { Router } from "express";
 import RepliceController from "../controllers/RepliceController";
+import authUser from "../middlewares/authUser";
 
 const router = Router();
 
-router.get("/replices", RepliceController.find);
-router.post("/replice", RepliceController.create);
-router.patch("/replice/:id", RepliceController.update);
-router.delete("/replice/:id", RepliceController.delete);
+router.get("/replices", authUser, RepliceController.find);
+router.post("/replice", authUser, RepliceController.create);
+router.patch("/replice/:id", authUser, RepliceController.update);
+router.delete("/replice/:id", authUser, RepliceController.delete);
 
 export default router;

@@ -16,7 +16,7 @@ export class User {
   email: string;
   @Column()
   password: string;
-  @Column()
+  @Column({ nullable: true })
   photo_profile: string;
   @Column()
   bio: string;
@@ -35,6 +35,6 @@ export class User {
     onUpdate: "CASCADE",
   })
   @JoinColumn()
-  follower: Threads[];
+  follower: Following[];
 }
 // users	id	PK	username	varchar	full_name	varchar	email	varchar	password	varchar	photo_profile	varchar	bio	varchar	created_at	date	created_by	FK	updated_at	date	updaed_by	FKt
