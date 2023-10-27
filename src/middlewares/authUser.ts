@@ -22,8 +22,9 @@ const authUser = (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers;
     let token: string;
 
-    if (authorization && authorization.startsWith("Bearer ")) {
+    if (authorization && authorization.startsWith("Bearer")) {
       token = authorization.split(" ")[1];
+      //   console.log(token);
     } else {
       token = req.headers["x-access-token"] || req.cookies["jwt"] || null;
     }
@@ -36,6 +37,7 @@ const authUser = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const decoded = verify(token, process.env.JWT_TOKEN_KEY);
+    // console.log(decoded);
 
     res.user = decoded;
 

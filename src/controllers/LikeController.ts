@@ -9,6 +9,6 @@ export default new (class LikeController {
     LikesService.create(req, res);
   }
   delete(req: Request, res: Response) {
-    LikesService.delete;
+    LikesService.delete(req, res);
   }
 })();

@@ -15,10 +15,16 @@ import { Threads } from "./Thread";
 export class Likes {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
   @JoinColumn()
   user_id: User;
-  @ManyToOne(() => Threads, (thread) => thread.id)
+  @ManyToOne(() => Threads, (thread) => thread.id, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
   @JoinColumn()
   thread_id: Threads;
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

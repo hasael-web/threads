@@ -61,7 +61,7 @@ export default new (class UserService {
         username,
       });
       if (error) return res.status(404).json({ status: 404, error });
-
+      //
       const findUser = await this.UserRespository.count({
         where: { email: data.email },
       });
@@ -70,12 +70,13 @@ export default new (class UserService {
         return res
           .status(404)
           .json({ status: 404, message: "email alredy exits" });
+
       const { passwordHash } = hashPassword(data.password, 10);
 
       const maxAge = 2 * 60 * 60;
       const token = TokenConfig.getToken(data.email, maxAge);
 
-      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+      // res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
 
       // const avatar = path.join(__dirname, "./src/assets", "avatar.jpg");
       let avatar: string =
@@ -145,7 +146,7 @@ export default new (class UserService {
         full_name: findUser.full_name,
       };
 
-      return res.status(200).json({ status: 200, data: user });
+      return res.status(200).json({ status: 200, data: user, token });
     } catch (error) {
       return res
         .status(500)

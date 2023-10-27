@@ -11,3 +11,7 @@ export default new (class TokenConfig {
     return token;
   }
 })();
+
+// const getToken = (email,expirationTime)=>{
+//   const token =
+// }
