@@ -22,7 +22,7 @@ export class Replies {
   @JoinColumn()
   user_id: User;
 
-  @ManyToOne(() => Threads, (thread) => thread.number_of_replies, {
+  @ManyToOne(() => Threads, (thread) => thread.id, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })

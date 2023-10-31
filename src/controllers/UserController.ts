@@ -20,4 +20,7 @@ export default new (class UserController {
   logout(req: Request, res: Response) {
     UserService.logout(req, res);
   }
+  check(req: Request, res: Response) {
+    UserService.chek(req, res);
+  }
 })();

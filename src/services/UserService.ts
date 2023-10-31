@@ -10,6 +10,7 @@ import {
 import * as path from "path";
 import { chekPassword, hashPassword } from "../utils/user_bcript";
 import TokenConfig from "../utils/auth";
+import { compare } from "bcrypt";
 // import { UserSchemaValidate } from "../utils/UserSchemaValidate";
 
 type TUserC = {
@@ -73,9 +74,6 @@ export default new (class UserService {
 
       const { passwordHash } = hashPassword(data.password, 10);
 
-      const maxAge = 2 * 60 * 60;
-      const token = TokenConfig.getToken(data.email, maxAge);
-
       // res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
 
       // const avatar = path.join(__dirname, "./src/assets", "avatar.jpg");
@@ -87,7 +85,6 @@ export default new (class UserService {
         data.photo_profile === undefined
           ? avatar
           : data.photo_profile;
-      console.log(photoProfile);
 
       const createUser = this.UserRespository.create({
         full_name: data.full_name,
@@ -101,7 +98,7 @@ export default new (class UserService {
       await this.UserRespository.save(createUser);
       return res
         .status(200)
-        .json({ status: 200, message: "success", data: createUser, token });
+        .json({ status: 200, message: "success", data: createUser });
     } catch (error) {
       return res.status(500).json({
         status: 500,
@@ -129,22 +126,25 @@ export default new (class UserService {
           .status(404)
           .json({ status: 404, message: "email not found" });
 
-      const chekValidasi = chekPassword(body.password, findUser.password);
+      const chekValidasi = await compare(body.password, findUser.password);
 
       if (!chekValidasi) {
         return res.status(404).json({ status: 404, message: "password wrong" });
       }
+
+      const user = {
+        id: findUser.id,
+        username: findUser.username,
+        full_name: findUser.full_name,
+        photo_profile: findUser.photo_profile,
+      };
+
       const maxAge = 2 * 60 * 60;
-      const token = TokenConfig.getToken(body.email, maxAge);
+      const token = TokenConfig.getToken(user, maxAge);
       res.cookie("jwt", token, {
         httpOnly: true,
         maxAge: maxAge * 1000,
       });
-
-      const user = {
-        username: findUser.username,
-        full_name: findUser.full_name,
-      };
 
       return res.status(200).json({ status: 200, data: user, token });
     } catch (error) {
@@ -233,6 +233,16 @@ export default new (class UserService {
         message: "something when wrong on delete user",
         error,
       });
+    }
+  }
+
+  async chek(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = res.locals.user;
+
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(500).json({ status: 500, error });
     }
   }
 })();

@@ -1,0 +1,69 @@
+--------------------
+    message queue ?
+
+ 1. message queue
+ 2. setup
+    -- bagaimana cara connetction nya??
+    -- bagaimana cara menggunakan nya contoh nya buat didalam threads??
+
+
+ 3. contoh platform 
+   - rabbitmq
+   - kafka
+   - asynq -> buat golang
+
+
+
+ //
+ apa itu race kondition ?
+ //
+
+ // 
+ membuat pelayan!! yang duluan antri....
+ //
+
+ //
+ bisa menjalanakan prosses asyncronous
+ //
+
+
+ //
+ threadque dan walker
+ //
+
+ //
+ setting evironment variable
+ //
+ enable pugin rabbitmq management
+ //
+
+ //
+ library nodejs amqplib
+ //
+
+ //
+ membuat antrian 
+ //
+
+
+
+---------------------
+ --Worker--
+ 
+ 1.apa itu worker?
+ 2. untuk apa worker??
+ 3. cara menggunakan worker
+
+ " aoa itu amqp"
+ 4. cara meng connection kan nya??
+
+ message bloker dan message queue
+
+////////
+
+yang membuat antria queue
+
+//////
+menjalankan walker
+
+worker: "noedemon --exec ts-noe src"alamat file walkernya"

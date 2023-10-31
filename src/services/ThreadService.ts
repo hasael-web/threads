@@ -19,6 +19,7 @@ export default new (class ThreadService {
         relations: {
           create_by: true,
           like: true,
+          number_of_replies: true,
         },
         select: {
           create_by: {
@@ -44,7 +45,7 @@ export default new (class ThreadService {
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
-      const { content, create_by } = req.body;
+      const { content } = req.body;
 
       const file = dataUri(req).content;
 
@@ -54,8 +55,15 @@ export default new (class ThreadService {
       });
 
       const image = cloud.secure_url;
-      const { error } = ThreadSchemaValidate.validate({ content, create_by });
+      console.log(image);
+
+      const { error } = ThreadSchemaValidate.validate({ content });
       if (error) return res.status(404).json({ status: 404, error });
+
+      // console.log(res.locals);
+
+      const create_by = res.locals.user.id;
+      // console.log(create_by);
 
       const newThread = await this.ThreadRepository.save({
         content,

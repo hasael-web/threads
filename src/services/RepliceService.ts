@@ -2,10 +2,34 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Replies } from "../entities/Replies";
 import { Request, Response } from "express";
-import { RepliceSchemaValidate, RepliceUpdateValidate } from "../utils/RepliceSchemaValidate";
+import {
+  RepliceSchemaValidate,
+  RepliceUpdateValidate,
+} from "../utils/RepliceSchemaValidate";
+import { Threads } from "../entities/Thread";
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+type Therads = {
+  id?: number;
+  content?: string;
+  image?: string;
+  created_at?: Date;
+  updated_at?: Date;
+  user_id?: number;
+};
+
+type TD = {
+  id: number;
+};
 
 export default new (class RepliesService {
-  private readonly RepliceRepository: Repository<Replies> = AppDataSource.getRepository(Replies);
+  private readonly RepliceRepository: Repository<Replies> =
+    AppDataSource.getRepository(Replies);
+  private readonly ThreadRepository: Repository<Threads> =
+    AppDataSource.getRepository(Threads);
 
   async find(req: Request, res: Response): Promise<Response> {
     try {
@@ -29,28 +53,51 @@ export default new (class RepliesService {
         },
       });
 
-      return res.status(200).json({ status: 200, message: "success", data: findAll });
+      return res
+        .status(200)
+        .json({ status: 200, message: "success", data: findAll });
     } catch (error) {
-      return res.status(500).json({ status: 500, message: "something when wrong on find replice" });
+      return res
+        .status(500)
+        .json({ status: 500, message: "something when wrong on find replice" });
     }
   }
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
-      const body = req.body;
+      const { content } = req.body;
+      const id: number = parseInt(req.params.idThread, 10);
 
-      const { error } = RepliceSchemaValidate.validate(body);
+      const userId = res.locals.user;
+      // console.log(userId);
+
+      const findThread: DeepPartial<Therads> =
+        await this.ThreadRepository.findOne({
+          where: { id },
+        });
+
+      if (!findThread)
+        return res.status(404).json({ status: 404, message: "id not found " });
+      const { error } = RepliceSchemaValidate.validate({ content });
       if (error) return res.status(404).json({ status: 404, error });
 
-      const newDate = this.RepliceRepository.create(body);
-      console.log(newDate);
+      // const thread_id: DeepPartial<TD> = id;
+      const newDate = this.RepliceRepository.create({
+        content,
+        user_id: userId.id,
+        thread_id: findThread,
+      });
+      // console.log(newDate);
 
-      this.RepliceRepository.save(body);
-      return res.status(200).json({ status: 200, message: "success", data: newDate });
-    } catch (error) {
+      this.RepliceRepository.save(newDate);
       return res
-        .status(500)
-        .json({ status: 500, message: "something when wrong on create Replice" });
+        .status(200)
+        .json({ status: 200, message: "success", data: newDate });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "something when wrong on create Replice",
+      });
     }
   }
 
@@ -60,7 +107,8 @@ export default new (class RepliesService {
       const id: number = parseInt(req.params.id, 10);
 
       const findReplice = await this.RepliceRepository.findOneBy({ id });
-      if (!findReplice) return res.status(404).json({ status: 404, message: "id not found" });
+      if (!findReplice)
+        return res.status(404).json({ status: 404, message: "id not found" });
 
       const { error } = RepliceUpdateValidate.validate(body);
 
@@ -75,9 +123,13 @@ export default new (class RepliesService {
       this.RepliceRepository.update(findReplice, body);
       const update = await this.RepliceRepository.save(findReplice);
 
-      return res.status(200).json({ status: 200, message: "success to update", data: update });
+      return res
+        .status(200)
+        .json({ status: 200, message: "success to update", data: update });
     } catch (error) {
-      return res.status(500).json({ status: 500, message: "something when wrong on replice" });
+      return res
+        .status(500)
+        .json({ status: 500, message: "something when wrong on replice" });
     }
   }
 
@@ -87,14 +139,18 @@ export default new (class RepliesService {
 
       const findReplice = await this.RepliceRepository.findOneBy({ id });
 
-      if (!findReplice) return res.status(404).json({ status: 404, message: "id not found" });
+      if (!findReplice)
+        return res.status(404).json({ status: 404, message: "id not found" });
 
       this.RepliceRepository.remove(findReplice);
-      return res.status(200).json({ status: 200, message: "success to delete replice" });
-    } catch (error) {
       return res
-        .status(500)
-        .json({ status: 500, message: "something when wrong on delete replice" });
+        .status(200)
+        .json({ status: 200, message: "success to delete replice" });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "something when wrong on delete replice",
+      });
     }
   }
 })();

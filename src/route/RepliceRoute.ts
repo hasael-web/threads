@@ -5,7 +5,7 @@ import authUser from "../middlewares/authUser";
 const router = Router();
 
 router.get("/replices", authUser, RepliceController.find);
-router.post("/replice", authUser, RepliceController.create);
+router.post("/thread/replice/:idThread", authUser, RepliceController.create);
 router.patch("/replice/:id", authUser, RepliceController.update);
 router.delete("/replice/:id", authUser, RepliceController.delete);
 

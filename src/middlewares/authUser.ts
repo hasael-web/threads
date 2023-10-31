@@ -8,14 +8,14 @@ dotenv.config();
 //   user: any;
 // }
 
-export {};
-declare global {
-  namespace Express {
-    interface Response {
-      user?: any;
-    }
-  }
-}
+// export {};
+// declare global {
+//   namespace Express {
+//     interface Response {
+//       user?: any;
+//     }
+//   }
+// }
 
 const authUser = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,6 +28,7 @@ const authUser = (req: Request, res: Response, next: NextFunction) => {
     } else {
       token = req.headers["x-access-token"] || req.cookies["jwt"] || null;
     }
+
     if (!token) {
       return res.status(403).send("unAuthorization");
     }
@@ -37,9 +38,11 @@ const authUser = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const decoded = verify(token, process.env.JWT_TOKEN_KEY);
+
     // console.log(decoded);
 
-    res.user = decoded;
+    res.locals.user = decoded;
+    // console.log(res.locals);
 
     next();
   } catch (error) {
