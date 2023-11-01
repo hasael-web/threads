@@ -19,20 +19,20 @@ AppDataSource.initialize()
     const PORT = 3000;
     // cors option
     const API_URL = "http://localhost:5173/";
-    const option: cors.CorsOptions = {
-      allowedHeaders: [
-        "X-Requested-With",
-        "Content-Type",
-        "Accept",
-        "X-Access-Token",
-      ],
+    // const option: cors.CorsOptions = {
+    //   allowedHeaders: [
+    //     "X-Requested-With",
+    //     "Content-Type",
+    //     "Accept",
+    //     "X-Access-Token",
+    //   ],
 
-      credentials: true,
-      methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
-      preflightContinue: false,
-    };
+    //   credentials: true,
+    //   methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
+    //   preflightContinue: false,
+    // };
     // middleware
-    app.use(cors(option));
+    app.use(cors());
 
     app.use("*", cloudinaryConfig);
 

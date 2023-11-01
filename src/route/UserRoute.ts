@@ -5,11 +5,11 @@ import fileUpload from "../middlewares/file-upload";
 
 const router = Router();
 
-router.get("/users", UserController.find);
+router.get("/users", authUser, UserController.find);
 router.patch("/user/:id", authUser, UserController.update);
 router.delete("/user/:id", authUser, UserController.delete);
 
-router.post("/logout", authUser, UserController.logout);
+router.post("/logout", UserController.logout);
 router.post("/user", UserController.register);
 router.post("/login", UserController.login);
 router.get("/check", authUser, UserController.check);

@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
+} from "typeorm";
 import { Threads } from "./Thread";
 import { Replies } from "./Replies";
 import { Following } from "./Follows";
@@ -31,6 +38,13 @@ export class User {
   @JoinColumn()
   threads: Threads[];
   @OneToMany(() => Following, (follower) => follower.follower_id, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinColumn()
+  following: Following[];
+
+  @OneToMany(() => Following, (follower) => follower.following_id, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })

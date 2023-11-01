@@ -153,4 +153,20 @@ export default new (class RepliesService {
       });
     }
   }
+
+  async detail(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: number = parseInt(req.params.idThread, 10);
+
+      const findThreadReplice = await this.ThreadRepository.findBy({ id });
+      const findReplice = await this.RepliceRepository.findOne({
+        where: {},
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "something when wrong on detail replice",
+      });
+    }
+  }
 })();

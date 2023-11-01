@@ -14,4 +14,7 @@ export default new (class ThreadController {
   delete(req: Request, res: Response) {
     ThreadService.delete(req, res);
   }
+  detail(req: Request, res: Response) {
+    ThreadService.detail(req, res);
+  }
 })();

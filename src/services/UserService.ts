@@ -30,11 +30,13 @@ type TUserL = {
 export default new (class UserService {
   private readonly UserRespository: Repository<User> =
     AppDataSource.getRepository(User);
+
   async find(req: Request, res: Response): Promise<Response> {
     try {
       const getAll = await this.UserRespository.find({
         relations: {
           follower: true,
+          following: true,
         },
       });
 

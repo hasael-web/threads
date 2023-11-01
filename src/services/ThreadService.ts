@@ -48,15 +48,18 @@ export default new (class ThreadService {
       const { content } = req.body;
 
       const file = dataUri(req).content;
+      let image: string = "";
+      if (req.file || file) {
+        const cloud = await uploader.upload(file, {
+          use_filename: true,
+          folder: "threads",
+        });
+        image = cloud.secure_url;
+      } else {
+        image = "";
+      }
 
-      const cloud = await uploader.upload(file, {
-        use_filename: true,
-        folder: "threads",
-      });
-
-      const image = cloud.secure_url;
-      console.log(image);
-
+      // const image = imageCloud ? imageCloud : "" || null;
       const { error } = ThreadSchemaValidate.validate({ content });
       if (error) return res.status(404).json({ status: 404, error });
 
@@ -75,8 +78,8 @@ export default new (class ThreadService {
         .json({ status: 200, message: "success", data: newThread });
     } catch (error) {
       return res.status(500).json({
-        mstatus: 500,
-        essage: "something when wrong on create thread",
+        status: 500,
+        message: "something when wrong on create thread",
       });
     }
   }
@@ -135,6 +138,44 @@ export default new (class ThreadService {
       return res.status(500).json({
         status: 500,
         message: "something when wrong on update thread",
+      });
+    }
+  }
+
+  async detail(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: number = parseInt(req.params.id, 10);
+
+      const findThread = await this.ThreadRepository.findOne({
+        where: { id },
+        relations: {
+          like: true,
+          number_of_replies: true,
+          create_by: true,
+        },
+        select: {
+          create_by: {
+            full_name: true,
+            photo_profile: true,
+            username: true,
+            id: true,
+          },
+        },
+      });
+
+      if (!findThread) {
+        return res.status(404).json({ status: 404, message: "id not found" });
+      }
+      console.log("test");
+
+      return res
+        .status(200)
+        .json({ status: 200, message: "success", data: findThread });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "something when wrong on detail thread",
+        error,
       });
     }
   }
