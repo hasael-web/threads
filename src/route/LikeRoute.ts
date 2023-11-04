@@ -7,5 +7,4 @@ const router = Router();
 router.get("/likes", authUser, LikeController.find);
 router.delete("/like/:id", authUser, LikeController.delete);
 router.post("/like", authUser, LikeController.create);
-
 export default router;

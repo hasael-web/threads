@@ -157,10 +157,19 @@ export default new (class RepliesService {
   async detail(req: Request, res: Response): Promise<Response> {
     try {
       const id: number = parseInt(req.params.idThread, 10);
+      console.log(id);
 
-      const findThreadReplice = await this.ThreadRepository.findBy({ id });
-      const findReplice = await this.RepliceRepository.findOne({
-        where: {},
+      const findThreadReplice = await this.ThreadRepository.findOne({
+        where: { id },
+      });
+      console.log(findThreadReplice);
+
+      // const findReplice = await this.RepliceRepository.findOne({
+      //   where: {},
+      // });
+      return res.status(200).json({
+        status: 200,
+        message: "success",
       });
     } catch (error) {
       return res.status(500).json({

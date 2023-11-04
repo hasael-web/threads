@@ -30,7 +30,11 @@ const dataUri = (req: Request) => {
   );
 };
 
-export { dataUri };
+const fileBuffer = (req: Request) => {
+  return req.file.buffer;
+};
+
+export { dataUri, fileBuffer };
 // (req, res, function (err: any) {
 //     if (err)
 //       return res.status(404).json({ message: "file upload failed." });

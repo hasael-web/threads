@@ -14,4 +14,7 @@ export default new (class RepliceController {
   delete(req: Request, res: Response) {
     RepliceService.delete(req, res);
   }
+  detail(req: Request, res: Response) {
+    RepliceService.detail(req, res);
+  }
 })();

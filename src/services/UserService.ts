@@ -2,11 +2,7 @@ import { Request, Response } from "express";
 import { Repository } from "typeorm";
 import { User } from "../entities/User";
 import { AppDataSource } from "../data-source";
-import {
-  UserSchemaLogin,
-  UserSchemaUpdate,
-  UserSchemaValidate,
-} from "../utils/UserSchemaValidate";
+import { UserSchemaLogin, UserSchemaUpdate, UserSchemaValidate } from "../utils/UserSchemaValidate";
 import * as path from "path";
 import { chekPassword, hashPassword } from "../utils/user_bcript";
 import TokenConfig from "../utils/auth";
@@ -28,8 +24,7 @@ type TUserL = {
 };
 
 export default new (class UserService {
-  private readonly UserRespository: Repository<User> =
-    AppDataSource.getRepository(User);
+  private readonly UserRespository: Repository<User> = AppDataSource.getRepository(User);
 
   async find(req: Request, res: Response): Promise<Response> {
     try {
@@ -40,9 +35,7 @@ export default new (class UserService {
         },
       });
 
-      return res
-        .status(200)
-        .json({ status: 200, message: "success", data: getAll });
+      return res.status(200).json({ status: 200, message: "success", data: getAll });
     } catch (error) {
       return res.status(500).json({
         satatus: 500,
@@ -69,10 +62,7 @@ export default new (class UserService {
         where: { email: data.email },
       });
 
-      if (findUser > 0)
-        return res
-          .status(404)
-          .json({ status: 404, message: "email alredy exits" });
+      if (findUser > 0) return res.status(404).json({ status: 404, message: "email alredy exits" });
 
       const { passwordHash } = hashPassword(data.password, 10);
 
@@ -82,9 +72,7 @@ export default new (class UserService {
       let avatar: string =
         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=";
       const photoProfile =
-        data.photo_profile === "" ||
-        data.photo_profile === null ||
-        data.photo_profile === undefined
+        data.photo_profile === "" || data.photo_profile === null || data.photo_profile === undefined
           ? avatar
           : data.photo_profile;
 
@@ -98,9 +86,7 @@ export default new (class UserService {
       });
 
       await this.UserRespository.save(createUser);
-      return res
-        .status(200)
-        .json({ status: 200, message: "success", data: createUser });
+      return res.status(200).json({ status: 200, message: "success", data: createUser });
     } catch (error) {
       return res.status(500).json({
         status: 500,
@@ -123,10 +109,7 @@ export default new (class UserService {
         where: { email: body.email },
       });
 
-      if (!findUser)
-        return res
-          .status(404)
-          .json({ status: 404, message: "email not found" });
+      if (!findUser) return res.status(404).json({ status: 404, message: "email not found" });
 
       const chekValidasi = await compare(body.password, findUser.password);
 
@@ -150,9 +133,7 @@ export default new (class UserService {
 
       return res.status(200).json({ status: 200, data: user, token });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ status: 500, message: "something when wrong on login user" });
+      return res.status(500).json({ status: 500, message: "something when wrong on login user" });
     }
   }
 
@@ -165,9 +146,7 @@ export default new (class UserService {
 
       return res.status(200).json({ status: 200, message: "succes log out" });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ status: 500, message: "something when wrong on logout user" });
+      return res.status(500).json({ status: 500, message: "something when wrong on logout user" });
     }
   }
 
@@ -207,13 +186,9 @@ export default new (class UserService {
       this.UserRespository.update(findOneUser, body);
 
       const new_user = await this.UserRespository.save(findOneUser);
-      return res
-        .status(200)
-        .json({ status: 200, message: "success", data: new_user });
+      return res.status(200).json({ status: 200, message: "success", data: new_user });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ status: 500, message: "something when wrong on update user" });
+      return res.status(500).json({ status: 500, message: "something when wrong on update user" });
     }
   }
 

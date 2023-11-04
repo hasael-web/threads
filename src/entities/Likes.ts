@@ -19,14 +19,14 @@ export class Likes {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @JoinColumn()
   user_id: User;
   @ManyToOne(() => Threads, (thread) => thread.id, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @JoinColumn()
   thread_id: Threads;
+  @Column()
+  isLike: boolean;
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

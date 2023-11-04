@@ -1,12 +1,6 @@
 import { AppDataSource } from "./data-source";
 import express from "express";
-import {
-  LikeRouter,
-  RepliceRote,
-  ThreadRoute,
-  UserRoute,
-  FollowingRouter,
-} from "./route";
+import { LikeRouter, RepliceRote, ThreadRoute, UserRoute, FollowingRouter } from "./route";
 import cookieParser from "cookie-parser";
 // middleware
 import cors from "cors";
@@ -19,18 +13,13 @@ AppDataSource.initialize()
     const PORT = 3000;
     // cors option
     const API_URL = "http://localhost:5173/";
-    // const option: cors.CorsOptions = {
-    //   allowedHeaders: [
-    //     "X-Requested-With",
-    //     "Content-Type",
-    //     "Accept",
-    //     "X-Access-Token",
-    //   ],
+    const option: cors.CorsOptions = {
+      allowedHeaders: ["X-Requested-With", "Content-Type", "Accept", "X-Access-Token"],
 
-    //   credentials: true,
-    //   methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
-    //   preflightContinue: false,
-    // };
+      credentials: true,
+      methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
+      preflightContinue: false,
+    };
     // middleware
     app.use(cors());
 

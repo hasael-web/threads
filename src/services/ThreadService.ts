@@ -7,28 +7,44 @@ import {
   UpdateThreadValidate,
 } from "../utils/ThreadSchemaValidate";
 import { uploader } from "../config/cloudConfig";
-import { dataUri } from "../middlewares/file-upload";
+import { dataUri, fileBuffer } from "../middlewares/file-upload";
+import { Likes } from "../entities/Likes";
 
 export default new (class ThreadService {
   private readonly ThreadRepository: Repository<Threads> =
     AppDataSource.getRepository(Threads);
+  private readonly LikesRepository: Repository<Likes> =
+    AppDataSource.getRepository(Likes);
 
   async find(req: Request, res: Response): Promise<Response> {
     try {
       const findThread = await this.ThreadRepository.find({
-        relations: {
-          create_by: true,
-          like: true,
-          number_of_replies: true,
-        },
+        relations: [
+          "create_by",
+          "like.thread_id",
+          "like.user_id",
+          "number_of_replies",
+        ],
         select: {
           create_by: {
             full_name: true,
             username: true,
             photo_profile: true,
+            bio: true,
+          },
+          like: {
+            id: true,
+            thread_id: {
+              id: true,
+            },
+            user_id: {
+              id: true,
+              username: true,
+            },
+            isLike: true,
           },
         },
-        order: { id: "ASC" },
+        order: { id: "DESC" },
       });
 
       return res
@@ -47,7 +63,14 @@ export default new (class ThreadService {
     try {
       const { content } = req.body;
 
-      const file = dataUri(req).content;
+      let file: any;
+      if (req.file) {
+        file = dataUri(req).content;
+        // file = fileBuffer(req);
+        // console.log(file);
+      }
+      // console.log(file);
+
       let image: string = "";
       if (req.file || file) {
         const cloud = await uploader.upload(file, {
@@ -59,14 +82,10 @@ export default new (class ThreadService {
         image = "";
       }
 
-      // const image = imageCloud ? imageCloud : "" || null;
       const { error } = ThreadSchemaValidate.validate({ content });
       if (error) return res.status(404).json({ status: 404, error });
 
-      // console.log(res.locals);
-
       const create_by = res.locals.user.id;
-      // console.log(create_by);
 
       const newThread = await this.ThreadRepository.save({
         content,
@@ -142,41 +161,113 @@ export default new (class ThreadService {
     }
   }
 
+  // async detail(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const id: number = parseInt(req.params.id, 10);
+  //     // const user_id = res.locals.user.id;
+  //     const findThread = await this.ThreadRepository.findOne({
+  //       where: { id },
+  //       // relations: {
+  //       //   like: true,
+  //       //   number_of_replies: true,
+  //       //   create_by: true,
+  //       // },
+  //       // select: {
+  //       //   create_by: {
+  //       //     full_name: true,
+  //       //     photo_profile: true,
+  //       //     username: true,
+  //       //     id: true,
+  //       //   },
+  //       //   number_of_replies:{
+  //       //     user_id:true,
+
+  //       //   }
+  //       // },
+  //       // relations: ["like", "create_by", "number_of_replies.user_id"],
+  //       relations: ["create_by", "like.thread_id", "like.user_id", "number_of_replies"],
+  //       select: {
+  //         number_of_replies: {
+  //           content: true,
+  //           id: true,
+  //           image: true,
+
+  //           user_id: {
+  //             id: true,
+  //             full_name: true,
+  //             photo_profile: true,
+  //             username: true,
+  //           },
+  //         },
+  //         create_by: {
+  //           email: true,
+  //           id: true,
+  //           username: true,
+  //           photo_profile: true,
+  //           full_name: true,
+  //         },
+  //         like: {
+  //           id: true,
+
+  //           user_id: {
+  //             id: true,
+  //             full_name: true,
+  //             photo_profile: true,
+  //             username: true,
+  //           },
+  //           thread_id: {
+  //             id: true,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     if (!findThread) {
+  //       return res.status(404).json({ status: 404, message: "id not found" });
+  //     }
+  //     // console.log("test");
+
+  //     return res.status(200).json({ status: 200, message: "success", data: findThread });
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       status: 500,
+  //       message: "something when wrong on detail thread",
+  //       error,
+  //     });
+  //   }
+  // }
+
   async detail(req: Request, res: Response): Promise<Response> {
     try {
-      const id: number = parseInt(req.params.id, 10);
-
-      const findThread = await this.ThreadRepository.findOne({
-        where: { id },
-        relations: {
-          like: true,
-          number_of_replies: true,
-          create_by: true,
+      const id = parseInt(req.params.id, 10);
+      const thread = await this.ThreadRepository.findOne({
+        where: {
+          id: id,
         },
+        relations: [
+          "create_by",
+          "number_of_replies",
+          "number_of_replies.user_id",
+          "like",
+          "like.thread_id",
+          "like.user_id",
+        ],
         select: {
-          create_by: {
-            full_name: true,
-            photo_profile: true,
-            username: true,
+          like: {
             id: true,
+            thread_id: {
+              id: true,
+            },
+            user_id: {
+              id: true,
+            },
+            isLike: true,
           },
         },
       });
-
-      if (!findThread) {
-        return res.status(404).json({ status: 404, message: "id not found" });
-      }
-      console.log("test");
-
-      return res
-        .status(200)
-        .json({ status: 200, message: "success", data: findThread });
+      return res.status(200).json(thread);
     } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: "something when wrong on detail thread",
-        error,
-      });
+      return res.status(500).json({ Error: "Error While Getting Threads" });
     }
   }
 })();

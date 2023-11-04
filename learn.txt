@@ -67,3 +67,10 @@ yang membuat antria queue
 menjalankan walker
 
 worker: "noedemon --exec ts-noe src"alamat file walkernya"
+
+
+
+//////////////////////////////
+
+ REGIS DAN DOKER DAN WSL
+ SSE
